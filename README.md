@@ -1,3 +1,8 @@
+# 资料地址
+
+d2l官网 http://zh.d2l.ai/
+opencv中文文档 https://opencv.apachecn.org/
+
 # 安装pytorch
 
 官网安装，设置conda环境
@@ -20,7 +25,6 @@ print(torch.rand(3,3).cuda())
 
 ```
 
-# 开始学习
 
 ## Tensors(张量)
 
@@ -31,3 +35,4 @@ PyTorch 中的view( )函数相当于numpy中的resize( )函数，都是用来重
 view(3, 2)将张量重构成了3x2维的张量。
 view(-1)将张量重构成了1维的张量。
 torch.view(-1, 参数b)，则表示在参数a未知，参数b已知的情况下自动补齐行向量长度，在这个例子中b=3，re总共含有6个元素，则a=6/2=3。
+
