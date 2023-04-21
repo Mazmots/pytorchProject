@@ -1,6 +1,8 @@
 # 检查torch是否正在使用GPU
 import torch
 a = torch.cuda.is_available()
+print(torch.__version__)
+print(torch.version.cuda)
 print(a)
 
 ngpu= 1

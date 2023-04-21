@@ -92,7 +92,7 @@ cap = cv.VideoCapture(0)
 # 播放本地视频
 # cap = cv.VideoCapture('data/videos/1.avi')
 
-while(True):
+while(cap.isOpened()):
     # 逐帧捕获
     ret, frame = cap.read()
     # 对帧操作
