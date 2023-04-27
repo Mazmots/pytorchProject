@@ -24,7 +24,7 @@ print(a)
 img = transforms.ToPILImage()(a)
 img.show()
 """
-root = r'E:\cao\pytorchProject\data\MNIST\raw'
+root = r'E:\pyprojects\pytorchProject\data\MNIST\raw'
 
 
 train_set = mnist.read_image_file(os.path.join(root, 'train-images-idx3-ubyte')),\
@@ -139,10 +139,10 @@ class Trainer:
         # net放入cuda 或cpu
         self.net.to(self.device)
 
-        self.train_dataset = MNIST_Dataset(root=r'E:\cao\pytorchProject\data\MNIST\raw', is_train=True)
+        self.train_dataset = MNIST_Dataset(root=r'E:\pyprojects\pytorchProject\data\MNIST\raw', is_train=True)
         self.train_loader = DataLoader(dataset=self.train_dataset, batch_size=2048, shuffle=True)
 
-        self.test_dataset = MNIST_Dataset(root=r'E:\cao\pytorchProject\data\MNIST\raw', is_train=False)
+        self.test_dataset = MNIST_Dataset(root=r'E:\pyprojects\pytorchProject\data\MNIST\raw', is_train=False)
         self.test_loader = DataLoader(dataset=self.test_dataset, batch_size=256, shuffle=True)
 
         # 模型训练完成，得到h，loss，反向更新，优化器优化模型的权重
@@ -167,7 +167,7 @@ class Trainer:
                 loss = torch.mean((h - label) ** 2)
                 # 梯度清空
                 self.opt.zero_grad()
-                # 反向更新
+                # 反向更新  更新w和b
                 loss.backward()
                 # 计算梯度
                 self.opt.step()
