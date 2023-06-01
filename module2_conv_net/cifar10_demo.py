@@ -5,6 +5,8 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torchvision import datasets, transforms
+from net.conv_net import ConvNet
+from net.conv_net2 import ConvNet2
 
 torch.backends.cudnn.enabled = True
 torch.backends.cudnn.benchmark = True
@@ -45,58 +47,7 @@ class Net_v1(nn.Module):
         return self.out_layer(x)
 
 
-class ResNet(nn.Module):
-    def __init__(self):
-        super(ResNet, self).__init__()
-        self.conv1 = nn.Conv2d(3, 16, 3, 1, padding=1)
-        self.bn1 = nn.BatchNorm2d(16)
-        self.relu = nn.ReLU()
-        self.maxpool = nn.MaxPool2d(2)
 
-        self.conv2 = nn.Conv2d(16, 32, 3, 1, padding=1)
-        self.bn2 = nn.BatchNorm2d(32)
-
-        self.conv3 = nn.Conv2d(32, 64, 3, 1)
-
-        self.block1 = self.resnet_block(64, 64)
-        self.block2 = self.resnet_block(64, 128)
-        self.block3 = self.resnet_block(128, 256)
-
-        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(256, 10)
-
-    def resnet_block(self, in_channels, out_channels):
-        block = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, 3, 1, padding=1),
-            nn.BatchNorm2d(out_channels),
-            nn.ReLU(),
-
-            nn.Conv2d(out_channels, out_channels, 3, 1, padding=1),
-            nn.BatchNorm2d(out_channels),
-
-            nn.ReLU()
-        )
-        return block
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.maxpool(x)
-        x = self.conv2(x)
-        x = self.bn2(x)
-
-        x = self.conv3(x)
-
-        x = self.block1(x)
-        x = self.block2(x)
-        x = self.block3(x)
-
-        x = self.avgpool(x)
-        x = torch.flatten(x, 1)
-        x = self.fc(x)
-
-        return x
 
 
 class ResidualBlock(nn.Module):
@@ -151,7 +102,7 @@ class ResNet2(nn.Module):
         return x
 
 
-class Train:
+class Trainer:
     def __init__(self):
         super().__init__()
         self.train_data = datasets.CIFAR10(
@@ -166,15 +117,15 @@ class Train:
             transform=transforms.ToTensor(),
             download=True
         )
-        self.train_dataloader = DataLoader(dataset=self.train_data, batch_size=128, shuffle=True)
+        self.train_dataloader = DataLoader(dataset=self.train_data, batch_size=256, shuffle=True)
         self.test_dataloader = DataLoader(dataset=self.test_data, batch_size=256, shuffle=True)
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.net = ResNet().to(self.device)
+        self.net = ConvNet().to(self.device)
 
         self.optim = torch.optim.Adam(self.net.parameters())
         self.loss = nn.CrossEntropyLoss()
 
-    def trainer(self):
+    def train(self):
         writer = SummaryWriter('./result')
         train_epoch = 1000
         for epoch in range(1, train_epoch + 1):
@@ -193,7 +144,7 @@ class Train:
                 self.optim.step()
                 sum_loss += loss.item()
                 # 将训练好的权重文件保存
-                torch.save(self.net.state_dict(), f'params3//{i}.pth')
+                torch.save(self.net.state_dict(), f'params4//{i}.pth')
 
             avg_loss = sum_loss / len(self.train_dataloader)
             # 使用TensorBoard图形化显示
@@ -209,7 +160,7 @@ class Train:
 
     def test(self, e):
         # 载入最优的训练结果，进行测试
-        self.net.load_state_dict(torch.load(r'params3//' + os.listdir(r'params3')[-1]))
+        self.net.load_state_dict(torch.load(r'params4//' + os.listdir(r'params4')[-1]))
 
         for epoch in range(e):
             sum_score = 0
@@ -238,6 +189,6 @@ if __name__ == '__main__':
     # 数据格式 nchw 批次，通道数，h，w
     # data = torch.randn(128, 3, 32, 32)
 
-    train = Train()
-    # train.trainer()
-    train.test(10)
+    trainer = Trainer()
+    trainer.test()
+

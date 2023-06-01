@@ -111,6 +111,4 @@ params
 *.mp4
 *.avi
 
-data
-
-datafiles
+/data/
